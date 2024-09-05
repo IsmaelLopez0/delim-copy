@@ -1,0 +1,5 @@
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) transparent;
+  overflow-x: hidden;
+}
