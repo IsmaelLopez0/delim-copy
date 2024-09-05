@@ -2,6 +2,16 @@ import { useState } from "react";
 import TextArea from "../atoms/TextArea/Index";
 import Settings from "../Settings";
 import Select from "../atoms/Select";
+import { 
+  explodeRecords,
+  tidyUp,
+  attackTheClones,
+  addQuotes,
+  joinWithDelimiter,
+  wrapWithTags,
+  addInterval,
+  wrapIntervals
+} from "../../utils/functions";
 
 export default function Main() {
   const [leftSide, setLeftSide] = useState("");
@@ -35,34 +45,49 @@ export default function Main() {
         explode = "\n";
         break;
     }
-    let leftSideTemp = leftSide.split("\n");
+    // Paso 1: Explode: Primero debes dividir el texto en registros utilizando el delimitador adecuado.
+    let leftSideTemp = [];
+    leftSide.split("\n").forEach((record) => {
+      leftSideTemp.push(...record.split(explode));
+    });
+    // Paso 2: Attack the Clones: Eliminar duplicados una vez que los registros están bien formateados y limpiados.
+    if (settings.attackClones) {
+      leftSideTemp = [...new Set(leftSideTemp)];
+    }
+    // Paso 3: Add Quotes: Agregar comillas a los registros después de haber eliminado los duplicados y limpiado el formato.
+    if (settings.quotes) {
+      const quotes = settings.quotes === "double" ? '"' : "'";
+      leftSideTemp = leftSideTemp.map((item) => `${quotes}${item}${quotes}`);
+    }
+    // Paso 4: Tags: Envolver los registros en etiquetas HTML después de haber definido el formato y los delimitadores.
+    if (settings.openTag || settings.closeTag) {
+      const { openTag, closeTag } = settings;
+      leftSideTemp = leftSideTemp.map((item) => `${openTag ?? ""}${item}${closeTag ?? ""}`);
+    }
+    // Paso 5: Interval: Agregar saltos de línea aquí de un cierto número de registros, lo cual puede ser una función antes de finalizar el proceso.
+    // Paso 6: Interval Wrap: Finalmente, envolver los intervalos con etiquetas HTML si es necesario. Esta operación se realiza mejor al final porque encapsula los intervalos completos. */
+    if (settings.interval) {
+      const temp = [];
+      const openTag = settings.openIntervalTag ?? "";
+      const closeTag = settings.closeIntervalTag ?? "";
+      for (let i = 0; i < leftSideTemp.length; i += Number(settings.interval)) {
+        const items = leftSideTemp.slice(i, i + Number(settings.interval));
+        temp.push(`${openTag}${items.join(delimiter)}${closeTag}`);
+      }
+      leftSideTemp = temp.join("\n");
+    }
+    // Paso 7: Tidy Up: Eliminar saltos de línea internos es útil para limpiar los registros.
+    if (settings.removeNewlines) {
+      console.log('before', leftSideTemp);
+      leftSideTemp = leftSideTemp;
+      console.log('after', leftSideTemp);
+    }
+    // Paso 8: Delimiter: Usar un delimitador entre los registros es algo que se hace típicamente después de haber aplicado el formato y las transformaciones.
     let delimiter = settings.delimiter;
     if (delimiter === "newLine") {
       delimiter = "\n";
     }
-    if (settings.attackClones) {
-      const dataArr = new Set(leftSideTemp);
-      leftSideTemp = [...dataArr];
-    }
-    if (settings.openTag) {
-      leftSideTemp = leftSideTemp.map((item) => `${settings.openTag}${item}`);
-    }
-    if (settings.closeTag) {
-      leftSideTemp = leftSideTemp.map((item) => `${item}${settings.closeTag}`);
-    }
-    if (settings.quotes) {
-      if (settings.quotes === "double") {
-        leftSideTemp = leftSideTemp.map((item) => `"${item}"`);
-      } else if (settings.quotes === "single") {
-        leftSideTemp = leftSideTemp.map((item) => `'${item}'`);
-      }
-    }
-    if (settings.interval) {
-      const temp = [];
-    }
-    if (settings.removeNewlines) {
-      leftSideTemp = leftSideTemp.join(delimiter);
-    }
+    leftSideTemp = leftSideTemp.join(delimiter);
     setRightSide(leftSideTemp);
   }
 

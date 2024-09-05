@@ -24,13 +24,13 @@ export default function Settings({ settings, setSettings }) {
   return (
     <div className="flex flex-col w-full items-center justify-center">
       <button
-        className="w-fit flex items-center gap-4 underline underline-offset-4 mb-7"
+        className="w-fit flex items-center justify-center gap-4 underline underline-offset-4 mb-7"
         onClick={() => setShowSettings(!showSettings)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="30"
-          height="30"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
