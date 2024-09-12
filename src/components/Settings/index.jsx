@@ -140,16 +140,7 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <div className="w-fit">
-              <label className="block text-center md:text-left">Inervalos</label>
-              <small>Añade una nueva línea cada X valores</small>
-            </div>
-            <Input
-              value={settings.interval}
-              onChange={(e) => onChange("interval", e.target.value)}
-            />
-          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <label className="w-fit text-center md:text-left">Añadir comillas</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
@@ -169,6 +160,16 @@ export default function Settings({ settings, setSettings }) {
                 onClick={(e) => onChange("quotes", "single")}
               />
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <div className="w-fit">
+              <label className="block text-center md:text-left">Intervalos</label>
+              <small>Añade una nueva línea cada X valores</small>
+            </div>
+            <Input
+              value={settings.interval}
+              onChange={(e) => onChange("interval", e.target.value)}
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="w-fit">
