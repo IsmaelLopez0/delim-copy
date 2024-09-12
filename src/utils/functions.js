@@ -17,9 +17,25 @@ function tidyUp(records, tidyUp) {
  * @param {boolean} removeDuplicates - Si se deben eliminar los duplicados.
  * @returns {string[]} - Un array de registros únicos.
  */
-function attackTheClones(records, removeDuplicates) {
+function attackTheClones(records, removeDuplicates, explode) {
     if (removeDuplicates) {
-        return [...new Set(records)];
+        const existingValues = [];
+        const newValues = [];
+        records.forEach((record) => {
+            let rowValues = record.split(explode);
+            for (let i = rowValues.length - 1; i >= 0; i--) {
+                const value = rowValues[i];
+                if (!existingValues.includes(value)) {
+                    existingValues.push(value);
+                } else {
+                    rowValues.splice(i, 1);
+                }
+            }
+            if (rowValues.length > 0) {
+                newValues.push(rowValues.join(explode));
+            }
+        });
+        return newValues;
     }
     return records;
 }

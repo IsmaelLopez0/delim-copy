@@ -2,16 +2,7 @@ import { useState } from "react";
 import TextArea from "../atoms/TextArea/Index";
 import Settings from "../Settings";
 import Select from "../atoms/Select";
-import { 
-  explodeRecords,
-  tidyUp,
-  attackTheClones,
-  addQuotes,
-  joinWithDelimiter,
-  wrapWithTags,
-  addInterval,
-  wrapIntervals
-} from "../../utils/functions";
+import { attackTheClones } from "../../utils/functions";
 
 export default function Main() {
   const [leftSide, setLeftSide] = useState("");
@@ -29,6 +20,11 @@ export default function Main() {
     closeIntervalTag: "",
   });
 
+  function cleanEmptyLines(lines) {
+    const cleanedLines = lines.filter(line => line.trim() !== "");
+    return cleanedLines;
+  }
+
   function transformFromLeftSide() {
     let explode = "\n";
     switch (settings.explodeBy) {
@@ -45,50 +41,81 @@ export default function Main() {
         explode = "\n";
         break;
     }
-    // Paso 1: Explode: Primero debes dividir el texto en registros utilizando el delimitador adecuado.
-    let leftSideTemp = [];
-    leftSide.split("\n").forEach((record) => {
-      leftSideTemp.push(...record.split(explode));
-    });
-    // Paso 2: Attack the Clones: Eliminar duplicados una vez que los registros están bien formateados y limpiados.
-    if (settings.attackClones) {
-      leftSideTemp = [...new Set(leftSideTemp)];
-    }
-    // Paso 3: Add Quotes: Agregar comillas a los registros después de haber eliminado los duplicados y limpiado el formato.
-    if (settings.quotes) {
-      const quotes = settings.quotes === "double" ? '"' : "'";
-      leftSideTemp = leftSideTemp.map((item) => `${quotes}${item}${quotes}`);
-    }
-    // Paso 4: Tags: Envolver los registros en etiquetas HTML después de haber definido el formato y los delimitadores.
-    if (settings.openTag || settings.closeTag) {
-      const { openTag, closeTag } = settings;
-      leftSideTemp = leftSideTemp.map((item) => `${openTag ?? ""}${item}${closeTag ?? ""}`);
-    }
-    // Paso 5: Interval: Agregar saltos de línea aquí de un cierto número de registros, lo cual puede ser una función antes de finalizar el proceso.
-    // Paso 6: Interval Wrap: Finalmente, envolver los intervalos con etiquetas HTML si es necesario. Esta operación se realiza mejor al final porque encapsula los intervalos completos. */
-    if (settings.interval) {
-      const temp = [];
-      const openTag = settings.openIntervalTag ?? "";
-      const closeTag = settings.closeIntervalTag ?? "";
-      for (let i = 0; i < leftSideTemp.length; i += Number(settings.interval)) {
-        const items = leftSideTemp.slice(i, i + Number(settings.interval));
-        temp.push(`${openTag}${items.join(delimiter)}${closeTag}`);
-      }
-      leftSideTemp = temp.join("\n");
-    }
-    // Paso 7: Tidy Up: Eliminar saltos de línea internos es útil para limpiar los registros.
-    if (settings.removeNewlines) {
-      console.log('before', leftSideTemp);
-      leftSideTemp = leftSideTemp;
-      console.log('after', leftSideTemp);
-    }
-    // Paso 8: Delimiter: Usar un delimitador entre los registros es algo que se hace típicamente después de haber aplicado el formato y las transformaciones.
+    // Paso 7: Delimiter: Usar un delimitador entre los registros es algo que se hace típicamente después de haber aplicado el formato y las transformaciones.
     let delimiter = settings.delimiter;
     if (delimiter === "newLine") {
       delimiter = "\n";
     }
+    // Paso 1: Explode: Primero debes dividir el texto en registros utilizando el delimitador adecuado.
+    let leftSideTemp = [];
+    const itemsByLine = {};
+    const existingValues = [];
+    const openTag = settings.openIntervalTag ?? "";
+    const closeTag = settings.closeIntervalTag ?? "";
+    let countToIntervals = 0;
+    const lines = attackTheClones(
+      cleanEmptyLines(leftSide.split("\n")),
+      settings.attackClones,
+      explode
+    );
+    lines.forEach((record, index) => {
+      if (record.trim().length === 0) {
+        return;
+      }
+      // leftSideTemp.push(...record.split(explode));
+      let rowValues = record.split(explode);
+      // Paso 2: Attack the Clones: Eliminar duplicados una vez que los registros están bien formateados y limpiados.
+      if (settings.attackClones) {
+        for (let i = rowValues.length - 1; i >= 0; i--) {
+          const value = rowValues[i];
+          if (!existingValues.includes(value)) {
+            existingValues.push(value);
+          } else {
+            rowValues.splice(i, 1);
+          }
+        }
+      }
+      if (rowValues.length === 0) {
+        return;
+      }
+      // Paso 3: Add Quotes: Agregar comillas a los registros después de haber eliminado los duplicados y limpiado el formato.
+      if (settings.quotes) {
+        const quotes = settings.quotes === "double" ? '"' : "'";
+        rowValues = rowValues.map((item) => `${quotes}${item}${quotes}`);
+      }
+      // Paso 4: Tags: Envolver los registros en etiquetas HTML después de haber definido el formato y los delimitadores.
+      if (settings.openTag || settings.closeTag) {
+        const { openTag, closeTag } = settings;
+        rowValues = rowValues.map((item) => `${openTag ?? ""}${item}${closeTag ?? ""}`);
+      }
+      // Paso 5: Interval: Agregar saltos de línea aquí de un cierto número de registros, lo cual puede ser una función antes de finalizar el proceso.
+      // Paso 6: Interval Wrap: Finalmente, envolver los intervalos con etiquetas HTML si es necesario. Esta operación se realiza mejor al final porque encapsula los intervalos completos. */
+      if (settings.interval) {
+        for (let i = 0; i < rowValues.length; i += 1) {
+          if (countToIntervals === 0) {
+            rowValues[i] = `${openTag}${rowValues[i]}`;
+          }
+          if (countToIntervals >= 0 && countToIntervals < Number(settings.interval)) {
+            countToIntervals += 1;
+          }
+          const canContinue = index < lines.length - 1 || i < rowValues.length - 1;
+          if (countToIntervals === Number(settings.interval) || !canContinue) {
+            rowValues[i] = `${rowValues[i]}${closeTag}`;
+            countToIntervals = 0;
+          }
+        }
+      }
+      itemsByLine[index] = rowValues;
+    });
+    // Paso 8: Tidy Up: Eliminar saltos de línea internos es útil para limpiar los registros.
+    let finalOutput = Object.values(itemsByLine).map((item) => item.join(delimiter));
+    if (settings.removeNewlines) {
+      finalOutput = finalOutput.join(delimiter);
+    } else {
+      finalOutput = finalOutput.join(`${delimiter}\n`);
+    }
     leftSideTemp = leftSideTemp.join(delimiter);
-    setRightSide(leftSideTemp);
+    setRightSide(finalOutput.trim());
   }
 
   return (
