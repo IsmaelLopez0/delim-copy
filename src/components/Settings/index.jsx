@@ -24,6 +24,7 @@ export default function Settings({ settings, setSettings }) {
   return (
     <div className="flex flex-col w-full items-center justify-center">
       <button
+        id="open-settings"
         className="w-fit flex items-center justify-center gap-4 underline underline-offset-4 mb-7"
         onClick={() => setShowSettings(!showSettings)}
       >
@@ -53,8 +54,8 @@ export default function Settings({ settings, setSettings }) {
       </button>
       {showSettings && (
         <div className="grid grid-cols-2 gap-4 bg-gray-700 p-2 rounded">
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit">Eliminar saltos de linea</label>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <label className="text-center md:w-fit md:text-left">Eliminar saltos de linea</label>
             <div className="grid grid-cols-2 gap-8">
               <CustomButton
                 selected={settings.removeNewlines === true}
@@ -68,15 +69,15 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit">Delimitador</label>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <label className="text-center md:w-fit md:text-left">Delimitador</label>
             <Input
               value={settings.delimiter}
               onChange={(e) => onChange("delimiter", e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit">Remover duplicados</label>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <label className="text-center md:w-fit md:text-left">Remover duplicados</label>
             <div className="grid grid-cols-2 gap-8">
               <CustomButton
                 selected={settings.attackClones === true}
@@ -90,14 +91,14 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <div className="w-fit">
-              <label className="block">Etiquetas</label>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <div className="md:w-fit">
+              <label className="block text-center md:text-left">Etiquetas</label>
               <small>
                 Añade al inicio o al final de cada valor una etiqueta
               </small>
             </div>
-            <div className="w-full flex gap-6">
+            <div className="w-full flex flex-col md:flex-row gap-6">
               <div className="flex flex-col items-center justify-center">
                 <label className="w-full text-center">Abre</label>
                 <Input
@@ -114,9 +115,9 @@ export default function Settings({ settings, setSettings }) {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit">Detonar con:</label>
-            <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <label className="w-fit text-center md:text-left">Detonar con:</label>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1">
               <CustomButton
                 selected={settings.explodeBy === "newLines"}
                 text="Nuevas lineas"
@@ -139,9 +140,9 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="w-fit">
-              <label className="block">Inervalos</label>
+              <label className="block text-center md:text-left">Inervalos</label>
               <small>Añade una nueva línea cada X valores</small>
             </div>
             <Input
@@ -149,9 +150,9 @@ export default function Settings({ settings, setSettings }) {
               onChange={(e) => onChange("interval", e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit">Añadir comillas</label>
-            <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <label className="w-fit text-center md:text-left">Añadir comillas</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
               <CustomButton
                 selected={settings.quotes === null}
                 text="No"
@@ -169,14 +170,14 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="w-fit">
               <label className="block">Etiquetas de intervalos</label>
               <small>
                 Añade al inicio o al final de cada intervalo una etiqueta
               </small>
             </div>
-            <div className="w-full flex gap-6">
+            <div className="w-full flex flex-col md:flex-row gap-6">
               <div className="flex flex-col items-center justify-center">
                 <label className="w-full text-center">Abre</label>
                 <Input

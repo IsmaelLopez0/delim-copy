@@ -5,15 +5,19 @@ import Main from '../components/Main';
 
 <Layout title="Free Online Comma Separator Tool">
 	<div class="flex flex-col gap-7 mb-7 max-w-2xl m-auto">
-		<p class="text-center">
+		<p class="text-center text-xl">
 			¿Necesitas a menudo tomar una hoja de cálculo de datos y convertirla en una lista delimitada por comas?
 		</p>
 		<p class="text-center">
-			Ya sea para tomar una lista de códigos postales o nombres para hacer una consulta SQL, o para tomar datos de un CSV y poder pegarlos en una matriz. En delim.co hacemos que eso sea un poco más fácil.
+			Ya sea para tomar una lista de códigos postales o nombres para hacer una consulta SQL, o para tomar datos de un CSV y poder pegarlos en una matriz. <strong class="underline underline-offset-4">Aquí hacemos que eso sea un poco más fácil</strong>.
 		</p>
-		<p class="text-center">
+		<p class="text-center md:hidden">
+			Ingresa tus datos no delimitados en el recuadro superior, presiona el botón y listo, los datos separados aparecerán en el recuadro inferior.
+		</p>
+		<p class="text-center hidden md:block">
 			Ingresa tus datos no delimitados a la izquierda, presiona el botón y listo, los datos separados a la derecha. ¡A continuación, encontrarás configuraciones especiales si los valores predeterminados no son lo que necesitas!
 		</p>
+		<p class="text-center text-sm">En la parte inferior encontrarás configuraciones especiales si los valores predeterminados no son lo que necesitas!</p>
 	</div>
 
 	<Main client:visible />

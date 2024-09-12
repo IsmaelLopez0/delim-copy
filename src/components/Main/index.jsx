@@ -183,7 +183,7 @@ export default function Main() {
 
   return (
     <>
-      <div className="grid grid-cols-[1fr_100px_1fr] gap-5 mb-7">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_100px_1fr] gap-5 mb-7">
         <div className="col-span-1">
           <h2 className="text-2xl mb-3 pl-4">Datos en columnas aquí ...</h2>
           <TextArea
@@ -193,9 +193,10 @@ export default function Main() {
             client:visible
           />
         </div>
-        <div className="flex flex-col justify-center items-center mx-auto">
-          <button onClick={() => transformFromRightSide()}>
+        <div className="flex md:flex-col justify-center items-center mx-auto gap-5">
+          <button id="transformRight" aria-label="transform-right" onClick={() => transformFromRightSide()}>
             <svg
+              className="rotate-90 md:transform-none"
               xmlns="http://www.w3.org/2000/svg"
               width="44"
               height="44"
@@ -226,8 +227,9 @@ export default function Main() {
             }
             client:visible
           />
-          <button onClick={() => transformFromLeftSide()}>
+          <button id="transformLeft" aria-label="transform-left" onClick={() => transformFromLeftSide()}>
             <svg
+              className="rotate-90 md:transform-none"
               xmlns="http://www.w3.org/2000/svg"
               width="44"
               height="44"
