@@ -47,11 +47,10 @@ export default function Main() {
       delimiter = "\n";
     }
     // Paso 1: Explode: Primero debes dividir el texto en registros utilizando el delimitador adecuado.
-    let leftSideTemp = [];
     const itemsByLine = {};
     const existingValues = [];
-    const openTag = settings.openIntervalTag ?? "";
-    const closeTag = settings.closeIntervalTag ?? "";
+    const openIntervalTag = settings.openIntervalTag ?? "";
+    const closeIntervalTag = settings.closeIntervalTag ?? "";
     let countToIntervals = 0;
     const lines = attackTheClones(
       cleanEmptyLines(leftSide.split("\n")),
@@ -62,7 +61,6 @@ export default function Main() {
       if (record.trim().length === 0) {
         return;
       }
-      // leftSideTemp.push(...record.split(explode));
       let rowValues = record.split(explode);
       // Paso 2: Attack the Clones: Eliminar duplicados una vez que los registros están bien formateados y limpiados.
       if (settings.attackClones) {
@@ -93,14 +91,14 @@ export default function Main() {
       if (settings.interval) {
         for (let i = 0; i < rowValues.length; i += 1) {
           if (countToIntervals === 0) {
-            rowValues[i] = `${openTag}${rowValues[i]}`;
+            rowValues[i] = `${openIntervalTag}${rowValues[i]}`;
           }
           if (countToIntervals >= 0 && countToIntervals < Number(settings.interval)) {
             countToIntervals += 1;
           }
           const canContinue = index < lines.length - 1 || i < rowValues.length - 1;
           if (countToIntervals === Number(settings.interval) || !canContinue) {
-            rowValues[i] = `${rowValues[i]}${closeTag}`;
+            rowValues[i] = `${rowValues[i]}${closeIntervalTag}`;
             countToIntervals = 0;
           }
         }
@@ -114,8 +112,73 @@ export default function Main() {
     } else {
       finalOutput = finalOutput.join(`${delimiter}\n`);
     }
-    leftSideTemp = leftSideTemp.join(delimiter);
-    setRightSide(finalOutput.trim());
+    if (settings.interval) {
+      const regex = new RegExp(`${closeIntervalTag}${delimiter}${openIntervalTag}`, "gm");
+      finalOutput = finalOutput.trim().replace(regex, `${closeIntervalTag}\n${openIntervalTag}`);
+    }
+    setRightSide(finalOutput);
+  }
+
+  function transformFromRightSide() {
+    let baseInitial = rightSide;
+    let delimiter = settings.delimiter;
+    if (delimiter === "newLine") {
+      delimiter = "\n";
+    }
+    const openIntervalTag = settings.openIntervalTag ?? "";
+    const closeIntervalTag = settings.closeIntervalTag ?? "";
+    if (settings.interval) {
+      const regex = new RegExp(`${closeIntervalTag}\n${openIntervalTag}`, "gm");
+      baseInitial = baseInitial.trim().replace(regex, `${closeIntervalTag}${delimiter}${openIntervalTag}`);
+    }
+    if (settings.removeNewlines) {
+      baseInitial = baseInitial.split(delimiter);
+    } else {
+      baseInitial = baseInitial.split(`${delimiter}\n`);
+    }
+    let rowValues = baseInitial;
+    if (settings.interval) {
+      let countToIntervals = 0;
+      for (let i = 0; i < rowValues.length; i += 1) {
+        if (countToIntervals === 0) {
+          rowValues[i] = rowValues[i].replace(openIntervalTag, "");
+        }
+        if (countToIntervals >= 0 && countToIntervals < Number(settings.interval)) {
+          countToIntervals += 1;
+        }
+        const canContinue = i < rowValues.length - 1;
+        if (countToIntervals === Number(settings.interval) || !canContinue) {
+          rowValues[i] = rowValues[i].replace(closeIntervalTag, "");
+          countToIntervals = 0;
+        }
+      }
+    }
+    if (settings.openTag || settings.closeTag) {
+      const { openTag, closeTag } = settings;
+      const regex = new RegExp(`${openTag ?? ""}${closeTag ?? ""}`, "gm");
+      rowValues = rowValues.map((item) => item.replace(regex, ""));
+    }
+    if (settings.quotes) {
+      const quotes = settings.quotes === "double" ? '"' : "'";
+      const regex = new RegExp(quotes, "gm");
+      rowValues = rowValues.map((item) => item.replace(regex, ""));
+    }
+    let explode = "\n";
+    switch (settings.explodeBy) {
+      case "spaces":
+        explode = " ";
+        break;
+      case "comma":
+        explode = ",";
+        break;
+      case "semicolon":
+        explode = ";";
+        break;
+      default:
+        explode = "\n";
+        break;
+    }
+    setLeftSide(rowValues.join(explode));
   }
 
   return (
@@ -131,7 +194,7 @@ export default function Main() {
           />
         </div>
         <div className="flex flex-col justify-center items-center mx-auto">
-          <button>
+          <button onClick={() => transformFromRightSide()}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="44"
