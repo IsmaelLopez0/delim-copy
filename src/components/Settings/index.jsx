@@ -55,7 +55,9 @@ export default function Settings({ settings, setSettings }) {
       {showSettings && (
         <div className="grid grid-cols-2 gap-4 bg-gray-700 p-2 rounded">
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="text-center md:w-fit md:text-left">Eliminar saltos de linea</label>
+            <label className="text-center md:w-fit md:text-left">
+              Eliminar saltos de linea
+            </label>
             <div className="grid grid-cols-2 gap-8">
               <CustomButton
                 selected={settings.removeNewlines === true}
@@ -70,14 +72,18 @@ export default function Settings({ settings, setSettings }) {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="text-center md:w-fit md:text-left">Delimitador</label>
+            <label className="text-center md:w-fit md:text-left">
+              Delimitador
+            </label>
             <Input
               value={settings.delimiter}
               onChange={(e) => onChange("delimiter", e.target.value)}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="text-center md:w-fit md:text-left">Remover duplicados</label>
+            <label className="text-center md:w-fit md:text-left">
+              Remover duplicados
+            </label>
             <div className="grid grid-cols-2 gap-8">
               <CustomButton
                 selected={settings.attackClones === true}
@@ -93,7 +99,9 @@ export default function Settings({ settings, setSettings }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="md:w-fit">
-              <label className="block text-center md:text-left">Etiquetas</label>
+              <label className="block text-center md:text-left">
+                Etiquetas
+              </label>
               <small>
                 Añade al inicio o al final de cada valor una etiqueta
               </small>
@@ -116,7 +124,9 @@ export default function Settings({ settings, setSettings }) {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit text-center md:text-left">Detonar con:</label>
+            <label className="w-fit text-center md:text-left">
+              Detonar con:
+            </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-1">
               <CustomButton
                 selected={settings.explodeBy === "newLines"}
@@ -140,9 +150,11 @@ export default function Settings({ settings, setSettings }) {
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
-            <label className="w-fit text-center md:text-left">Añadir comillas</label>
+            <label className="w-fit text-center md:text-left">
+              Añadir comillas
+            </label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
               <CustomButton
                 selected={settings.quotes === null}
@@ -163,7 +175,9 @@ export default function Settings({ settings, setSettings }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="w-fit">
-              <label className="block text-center md:text-left">Intervalos</label>
+              <label className="block text-center md:text-left">
+                Intervalos
+              </label>
               <small>Añade una nueva línea cada X valores</small>
             </div>
             <Input
@@ -194,6 +208,30 @@ export default function Settings({ settings, setSettings }) {
                 />
               </div>
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <div className="w-fit">
+              <label className="block text-center md:text-left">
+                Recortar al incio
+              </label>
+              <small>Remueve X caracteres al inicio de cada valor</small>
+            </div>
+            <Input
+              value={settings.trimStart}
+              onChange={(e) => onChange("trimStart", e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
+            <div className="w-fit">
+              <label className="block text-center md:text-left">
+                Recortar al final
+              </label>
+              <small>Remueve X caracteres al final de cada valor</small>
+            </div>
+            <Input
+              value={settings.trimEnd}
+              onChange={(e) => onChange("trimEnd", e.target.value)}
+            />
           </div>
         </div>
       )}

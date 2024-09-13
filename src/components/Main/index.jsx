@@ -18,10 +18,12 @@ export default function Main() {
     interval: "",
     openIntervalTag: "",
     closeIntervalTag: "",
+    trimStart: 0,
+    trimEnd: 0,
   });
 
   function cleanEmptyLines(lines) {
-    const cleanedLines = lines.filter(line => line.trim() !== "");
+    const cleanedLines = lines.filter((line) => line.trim() !== "");
     return cleanedLines;
   }
 
@@ -41,12 +43,10 @@ export default function Main() {
         explode = "\n";
         break;
     }
-    // Paso 7: Delimiter: Usar un delimitador entre los registros es algo que se hace típicamente después de haber aplicado el formato y las transformaciones.
     let delimiter = settings.delimiter;
     if (delimiter === "newLine") {
       delimiter = "\n";
     }
-    // Paso 1: Explode: Primero debes dividir el texto en registros utilizando el delimitador adecuado.
     const itemsByLine = {};
     const existingValues = [];
     const openIntervalTag = settings.openIntervalTag ?? "";
@@ -62,7 +62,6 @@ export default function Main() {
         return;
       }
       let rowValues = record.split(explode);
-      // Paso 2: Attack the Clones: Eliminar duplicados una vez que los registros están bien formateados y limpiados.
       if (settings.attackClones) {
         for (let i = rowValues.length - 1; i >= 0; i--) {
           const value = rowValues[i];
@@ -76,27 +75,39 @@ export default function Main() {
       if (rowValues.length === 0) {
         return;
       }
-      // Paso 3: Add Quotes: Agregar comillas a los registros después de haber eliminado los duplicados y limpiado el formato.
+      if (settings.trimStart) {
+        rowValues = rowValues.map((item) =>
+          item.substring(Number(settings.trimStart))
+        );
+      }
+      if (settings.trimEnd) {
+        rowValues = rowValues.map((item) =>
+          item.substring(item.length - Number(settings.trimEnd))
+        );
+      }
       if (settings.quotes) {
         const quotes = settings.quotes === "double" ? '"' : "'";
         rowValues = rowValues.map((item) => `${quotes}${item}${quotes}`);
       }
-      // Paso 4: Tags: Envolver los registros en etiquetas HTML después de haber definido el formato y los delimitadores.
       if (settings.openTag || settings.closeTag) {
         const { openTag, closeTag } = settings;
-        rowValues = rowValues.map((item) => `${openTag ?? ""}${item}${closeTag ?? ""}`);
+        rowValues = rowValues.map(
+          (item) => `${openTag ?? ""}${item}${closeTag ?? ""}`
+        );
       }
-      // Paso 5: Interval: Agregar saltos de línea aquí de un cierto número de registros, lo cual puede ser una función antes de finalizar el proceso.
-      // Paso 6: Interval Wrap: Finalmente, envolver los intervalos con etiquetas HTML si es necesario. Esta operación se realiza mejor al final porque encapsula los intervalos completos. */
       if (settings.interval) {
         for (let i = 0; i < rowValues.length; i += 1) {
           if (countToIntervals === 0) {
             rowValues[i] = `${openIntervalTag}${rowValues[i]}`;
           }
-          if (countToIntervals >= 0 && countToIntervals < Number(settings.interval)) {
+          if (
+            countToIntervals >= 0 &&
+            countToIntervals < Number(settings.interval)
+          ) {
             countToIntervals += 1;
           }
-          const canContinue = index < lines.length - 1 || i < rowValues.length - 1;
+          const canContinue =
+            index < lines.length - 1 || i < rowValues.length - 1;
           if (countToIntervals === Number(settings.interval) || !canContinue) {
             rowValues[i] = `${rowValues[i]}${closeIntervalTag}`;
             countToIntervals = 0;
@@ -105,16 +116,22 @@ export default function Main() {
       }
       itemsByLine[index] = rowValues;
     });
-    // Paso 8: Tidy Up: Eliminar saltos de línea internos es útil para limpiar los registros.
-    let finalOutput = Object.values(itemsByLine).map((item) => item.join(delimiter));
+    let finalOutput = Object.values(itemsByLine).map((item) =>
+      item.join(delimiter)
+    );
     if (settings.removeNewlines) {
       finalOutput = finalOutput.join(delimiter);
     } else {
       finalOutput = finalOutput.join(`${delimiter}\n`);
     }
     if (settings.interval) {
-      const regex = new RegExp(`${closeIntervalTag}${delimiter}${openIntervalTag}`, "gm");
-      finalOutput = finalOutput.trim().replace(regex, `${closeIntervalTag}\n${openIntervalTag}`);
+      const regex = new RegExp(
+        `${closeIntervalTag}${delimiter}${openIntervalTag}`,
+        "gm"
+      );
+      finalOutput = finalOutput
+        .trim()
+        .replace(regex, `${closeIntervalTag}\n${openIntervalTag}`);
     }
     setRightSide(finalOutput);
   }
@@ -129,7 +146,9 @@ export default function Main() {
     const closeIntervalTag = settings.closeIntervalTag ?? "";
     if (settings.interval) {
       const regex = new RegExp(`${closeIntervalTag}\n${openIntervalTag}`, "gm");
-      baseInitial = baseInitial.trim().replace(regex, `${closeIntervalTag}${delimiter}${openIntervalTag}`);
+      baseInitial = baseInitial
+        .trim()
+        .replace(regex, `${closeIntervalTag}${delimiter}${openIntervalTag}`);
     }
     if (settings.removeNewlines) {
       baseInitial = baseInitial.split(delimiter);
@@ -143,7 +162,10 @@ export default function Main() {
         if (countToIntervals === 0) {
           rowValues[i] = rowValues[i].replace(openIntervalTag, "");
         }
-        if (countToIntervals >= 0 && countToIntervals < Number(settings.interval)) {
+        if (
+          countToIntervals >= 0 &&
+          countToIntervals < Number(settings.interval)
+        ) {
           countToIntervals += 1;
         }
         const canContinue = i < rowValues.length - 1;
@@ -194,7 +216,11 @@ export default function Main() {
           />
         </div>
         <div className="flex md:flex-col justify-center items-center mx-auto gap-5">
-          <button id="transformRight" aria-label="transform-right" onClick={() => transformFromRightSide()}>
+          <button
+            id="transformRight"
+            aria-label="transform-right"
+            onClick={() => transformFromRightSide()}
+          >
             <svg
               className="rotate-90 md:transform-none"
               xmlns="http://www.w3.org/2000/svg"
@@ -227,7 +253,11 @@ export default function Main() {
             }
             client:visible
           />
-          <button id="transformLeft" aria-label="transform-left" onClick={() => transformFromLeftSide()}>
+          <button
+            id="transformLeft"
+            aria-label="transform-left"
+            onClick={() => transformFromLeftSide()}
+          >
             <svg
               className="rotate-90 md:transform-none"
               xmlns="http://www.w3.org/2000/svg"
