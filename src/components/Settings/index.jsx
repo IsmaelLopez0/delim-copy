@@ -56,7 +56,7 @@ export default function Settings({ settings, setSettings }) {
         <div className="grid grid-cols-2 gap-4 bg-gray-700 p-2 rounded">
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <label className="text-center md:w-fit md:text-left">
-              Eliminar saltos de linea
+              Eliminar saltos de línea
             </label>
             <div className="grid grid-cols-2 gap-8">
               <CustomButton
@@ -212,7 +212,7 @@ export default function Settings({ settings, setSettings }) {
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] p-4 gap-3 bg-gray-500 rounded items-center">
             <div className="w-fit">
               <label className="block text-center md:text-left">
-                Recortar al incio
+                Recortar al inicio
               </label>
               <small>Remueve X caracteres al inicio de cada valor</small>
             </div>

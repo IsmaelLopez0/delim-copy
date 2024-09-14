@@ -215,7 +215,7 @@ export default function Main() {
             client:visible
           />
         </div>
-        <div className="flex md:flex-col justify-center items-center mx-auto gap-5">
+        <div className="flex md:flex-col justify-center items-center md:pt-11 mx-auto gap-5 md:gap-0">
           <button
             id="transformRight"
             aria-label="transform-right"
