@@ -49,8 +49,12 @@ export default function Main() {
     }
     const itemsByLine = {};
     const existingValues = [];
-    const openIntervalTag = settings.openIntervalTag ?? "";
-    const closeIntervalTag = settings.closeIntervalTag ?? "";
+    const openIntervalTag = settings.openIntervalTag
+      ? `\\${settings.openIntervalTag}`
+      : "";
+    const closeIntervalTag = settings.closeIntervalTag
+      ? `\\${settings.closeIntervalTag}`
+      : "";
     let countToIntervals = 0;
     const lines = attackTheClones(
       cleanEmptyLines(leftSide.split("\n")),
@@ -126,9 +130,12 @@ export default function Main() {
     }
     if (settings.interval) {
       const regex = new RegExp(
-        `${closeIntervalTag}${delimiter}${openIntervalTag}`,
+        `${closeIntervalTag}${
+          delimiter ? `\\${delimiter}` : ""
+        }${openIntervalTag}`,
         "gm"
       );
+      console.log({ regex });
       finalOutput = finalOutput
         .trim()
         .replace(regex, `${closeIntervalTag}\n${openIntervalTag}`);
@@ -142,13 +149,22 @@ export default function Main() {
     if (delimiter === "newLine") {
       delimiter = "\n";
     }
-    const openIntervalTag = settings.openIntervalTag ?? "";
-    const closeIntervalTag = settings.closeIntervalTag ?? "";
+    const openIntervalTag = settings.openIntervalTag
+      ? `\\${settings.openIntervalTag}`
+      : "";
+    const closeIntervalTag = settings.closeIntervalTag
+      ? `\\${settings.closeIntervalTag}`
+      : "";
     if (settings.interval) {
       const regex = new RegExp(`${closeIntervalTag}\n${openIntervalTag}`, "gm");
       baseInitial = baseInitial
         .trim()
-        .replace(regex, `${closeIntervalTag}${delimiter}${openIntervalTag}`);
+        .replace(
+          regex,
+          `${closeIntervalTag}\\${
+            delimiter ? `\\${delimiter}` : ""
+          }${openIntervalTag}`
+        );
     }
     if (settings.removeNewlines) {
       baseInitial = baseInitial.split(delimiter);
@@ -177,7 +193,10 @@ export default function Main() {
     }
     if (settings.openTag || settings.closeTag) {
       const { openTag, closeTag } = settings;
-      const regex = new RegExp(`${openTag ?? ""}${closeTag ?? ""}`, "gm");
+      const regex = new RegExp(
+        `${openTag ? `\\${openTag}` : ""}${closeTag ? `\\${closeTag}` : ""}`,
+        "gm"
+      );
       rowValues = rowValues.map((item) => item.replace(regex, ""));
     }
     if (settings.quotes) {
