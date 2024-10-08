@@ -86,7 +86,7 @@ export default function Main() {
       }
       if (settings.trimEnd) {
         rowValues = rowValues.map((item) =>
-          item.substring(item.length - Number(settings.trimEnd))
+          item.substring(0, item.length - Number(settings.trimEnd))
         );
       }
       if (settings.quotes) {
